@@ -110,7 +110,6 @@ export default function Scramble() {
 					colors={[colors.primary, "#F7B801", "#A30000", "#A30000"]}
 					colorsTime={[30, 20, 10, 0]}
 					size={80}
-					// onComplete={() => revealAnswer()}
 				>
 					{({ remainingTime }) => <Text>{remainingTime}</Text>}
 				</CountdownCircleTimer>

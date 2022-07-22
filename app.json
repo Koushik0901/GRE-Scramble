@@ -2,7 +2,7 @@
   "expo": {
     "name": "gre-scramble",
     "slug": "gre-scramble",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -25,7 +25,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "versionCode": 3,
+      "versionCode": 5,
       "package": "com.koushik0901.grescramble"
     },
     "web": {
