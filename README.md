@@ -1,7 +1,10 @@
 # **GRE SCRAMBLE**
-
-A React Native application to help build and test your GRE vocabulary skills.
-
+### A React Native application to help build and test your GRE vocabulary skills.
+<a href="https://play.google.com/store/apps/details?id=com.koushik0901.grescramble">
+    <img src="https://raw.githubusercontent.com/steverichey/google-play-badge-svg/master/img/en_get.svg" alt="Build status" width=250, height=150>
+    <img src="https://raw.githubusercontent.com/steverichey/google-play-badge-svg/master/img/ta_get.svg" alt="Build status" width=250, height=150>
+</a>
+    
 ## Demo
 
 ### **1. Home Screen**
