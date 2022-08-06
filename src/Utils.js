@@ -1,8 +1,10 @@
 import { greWords } from "./Words";
 import { alphabets } from "./Constants";
 
-export function getRandomGreWord() {
-	const randomIndex = Math.floor(Math.random() * greWords.length);
+export function getRandomGreWord(setId) {
+	const max = setId * 30;
+	const min = max - 30;
+	const randomIndex = Math.floor(Math.random() * (max - min) + min);
 	return greWords[randomIndex];
 }
 

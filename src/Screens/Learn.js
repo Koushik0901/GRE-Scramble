@@ -11,28 +11,28 @@ import Card from "../Components/Card";
 import { greWords } from "../Words";
 import { colors } from "../Constants";
 
-
 const Item = ({ title, subTitle }) => (
 	<Card title={title} subTitle={subTitle} />
 );
 
 function Learn(props) {
-	const [wordData, setWordData] = React.useState(greWords.slice(0, 50));
-	const [startIndex, setStartIndex] = React.useState(50);
-	const renderItem = ({ item }) => (
-		<Item title={item.word} subTitle={item.meaning} />
-	);
+	const [wordData, setWordData] = React.useState(greWords.slice(0, 30));
+	const [startIndex, setStartIndex] = React.useState(30);
+	const renderItem = ({ item, index }) => {
+		const title = index + 1 + ") " + item.word;
+		return <Item title={title} subTitle={item.meaning} />;
+	};
 
 	const getNextSet = () => {
 		start = startIndex;
-		end = start + 50;
+		end = start + 30;
 		newData = greWords.slice(start, end);
 		setWordData(newData);
 		setStartIndex(end);
 	};
 	const getPreviousSet = () => {
-		end = startIndex - 50;
-		start = end - 50;
+		end = startIndex - 30;
+		start = end - 30;
 		newData = greWords.slice(start, end);
 		setWordData(newData);
 		setStartIndex(end);
@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
 		width: "90%",
 		paddingTop: 10,
 		paddingBottom: 10,
+		marginLeft: 20,
 		alignItems: "center",
 	},
 	buttons: {

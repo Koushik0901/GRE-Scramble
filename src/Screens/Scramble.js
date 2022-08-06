@@ -8,12 +8,13 @@ import {
 	Pressable,
 	Alert,
 	TouchableOpacity,
+	DevSettings,
 } from "react-native";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import { colors, CLEAR, numFillerLetters } from "../Constants";
 import { getRandomGreWord, getFillerLetters, shuffleArray } from "../Utils";
 
-let wordMeaningPair = getRandomGreWord();
+let wordMeaningPair = getRandomGreWord(1);
 let word = wordMeaningPair.word;
 let meaning = wordMeaningPair.meaning;
 let letters = word.split("");
@@ -21,7 +22,17 @@ let scrambledLetters = shuffleArray(
 	letters.concat(getFillerLetters(numFillerLetters))
 );
 
-export default function Scramble() {
+export default function Scramble({ route, navigation }) {
+	const { setId } = route.params;
+
+	useEffect(() => {
+		const { setId } = route.params;
+		const refresh = navigation.addListener("focus", () => {
+			refreshWords(setId);
+		});
+		return refresh;
+	}, [navigation, route]);
+
 	let initialAnswerState = new Array(word.length).fill("");
 
 	const [row, setRow] = useState(scrambledLetters);
@@ -50,18 +61,18 @@ export default function Scramble() {
 	const checkGameState = () => {
 		if (checkIfWon() && gameState !== "won") {
 			Alert.alert("Hurray", "You won!", [
-				{ text: "Next", onPress: refreshWords },
+				{ text: "Next", onPress: refreshWords(setId) },
 			]);
 			setGameState("won");
 			setScore(score + 1);
 		} else if (checkIfLost() && gameState !== "lost") {
-			Alert.alert("Meh", "Incorrect, try again!");
-			setGameState("lost");
-			setTextOnAnswer(initialAnswerState);
+			Alert.alert("Meh", "Incorrect, try again!", [
+				{ text: "Next", onPress: refreshWords(setId) },
+			]);
 		}
 	};
-	const refreshWords = () => {
-		wordMeaningPair = getRandomGreWord();
+	const refreshWords = (setId) => {
+		wordMeaningPair = getRandomGreWord(setId);
 		word = wordMeaningPair.word;
 		meaning = wordMeaningPair.meaning;
 		letters = word.split("");
@@ -77,7 +88,9 @@ export default function Scramble() {
 	};
 
 	function revealAnswer() {
-		Alert.alert(word, meaning, [{ text: "Next", onPress: refreshWords }]);
+		Alert.alert(word, meaning, [
+			{ text: "Next", onPress: refreshWords(setId) },
+		]);
 	}
 
 	const onKeyPressed = (key) => {
@@ -143,15 +156,24 @@ export default function Scramble() {
 			<View style={styles.meaningContainer}>
 				<Text style={styles.meaning}>Definition: {meaning}</Text>
 			</View>
-			<View style={styles.cellContainer}>
+			<View style={[styles.cellContainer, { marginBottom: 20 }]}>
 				<View style={styles.row}>
 					{row.map((letter, index) => (
 						<Pressable
 							onPress={() => {
 								onKeyPressed(letter);
 							}}
-							style={styles.cell}
+							style={[
+								styles.cell,
+								{
+									width: 55,
+									height: 55,
+									maxWidth: 55,
+									maxHeight: 55,
+								},
+							]}
 							key={index}
+							hitSlop={2}
 						>
 							<Text style={styles.cellText}>
 								{letter.toUpperCase()}
@@ -205,9 +227,8 @@ const styles = StyleSheet.create({
 		paddingBottom: 10,
 	},
 	cellContainer: {
-		flex: 1.5,
+		flex: 1,
 		width: "90%",
-		paddingBottom: 10,
 	},
 	row: {
 		flex: 1,
@@ -224,7 +245,7 @@ const styles = StyleSheet.create({
 		marginBottom: 6,
 		marginLeft: 6,
 		marginRight: 6,
-		maxWidth: 50,
+		maxWidth: 45,
 		justifyContent: "center",
 		alignItems: "center",
 		backgroundColor: "white",
@@ -236,7 +257,7 @@ const styles = StyleSheet.create({
 	},
 	cellText: {
 		color: "black",
-		fontSize: 28,
+		fontSize: 26,
 		fontWeight: "bold",
 	},
 	question: {
@@ -248,7 +269,7 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 	},
 	meaningContainer: {
-		flex: 1,
+		flex: 0.5,
 		justifyContent: "center",
 		alignItems: "center",
 		width: "90%",
@@ -263,11 +284,12 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-evenly",
 		width: "90%",
-		paddingTop: 10,
+		alignItems: "flex-end",
+		marginBottom: 10,
 	},
 	buttons: {
 		width: "35%",
-		height: 40,
+		height: 45,
 		alignItems: "center",
 		justifyContent: "center",
 		borderRadius: 25,

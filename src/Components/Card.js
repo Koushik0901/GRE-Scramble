@@ -2,10 +2,10 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { colors } from "../Constants";
 
-function Card({ title, subTitle }) {
+function Card({ title, subTitle, width = "90%" }) {
 	return (
 		<View style={styles.card}>
-			<Text style={styles.title}>{title}</Text>
+			<Text style={[styles.title, { width: width }]}>{title}</Text>
 			<Text style={styles.subTitle}>{subTitle}</Text>
 		</View>
 	);

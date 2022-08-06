@@ -1,23 +1,25 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Home from "./src/Screens/Home";
 import Scramble from "./src/Screens/Scramble";
 import Learn from "./src/Screens/Learn";
+import { colors } from "./src/Constants";
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
 	return (
 		<NavigationContainer>
-			<Tab.Navigator initialRouteName="Scramble">
+			<Tab.Navigator initialRouteName="Home">
 				<Tab.Screen
-					name="Scramble"
-					component={Scramble}
+					name="Home"
+					component={Home}
 					options={{
-						headerTitle: "GRE Scramble",
+						headerTitle: "Home",
 						tabBarIcon: ({ color }) => (
 							<MaterialCommunityIcons
-								name="puzzle-outline"
+								name="home-outline"
 								color={color}
 								size={30}
 							/>
@@ -29,6 +31,38 @@ export default function App() {
 						tabBarLabelStyle: {
 							fontSize: 14,
 							paddingBottom: 8,
+						},
+						headerTitleStyle: {
+							fontWeight: "bold",
+							color: colors.primary,
+						},
+					}}
+				/>
+				<Tab.Screen
+					name="Scramble"
+					component={Scramble}
+					options={{
+						tabBarIcon: ({ color }) => (
+							<MaterialCommunityIcons
+								name="home-outline"
+								color="white"
+								size={30}
+							/>
+						),
+						tabBarStyle: {
+							height: 70,
+							padding: 8,
+							backgroundColor: "white",
+						},
+						tabBarLabelStyle: {
+							fontSize: 14,
+							paddingBottom: 8,
+							color: "white",
+						},
+						headerTitle: "GRE Scramble",
+						headerTitleStyle: {
+							fontWeight: "bold",
+							color: colors.primary,
 						},
 					}}
 				/>
@@ -52,6 +86,10 @@ export default function App() {
 						tabBarLabelStyle: {
 							fontSize: 14,
 							paddingBottom: 8,
+						},
+						headerTitleStyle: {
+							fontWeight: "bold",
+							color: colors.primary,
 						},
 					}}
 				/>

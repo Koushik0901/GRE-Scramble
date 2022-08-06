@@ -3,8 +3,8 @@ export const colors = {
 	darkgrey: "#3A3A3D",
 	background: "#f8f9fa",
 	lightgrey: "#D7DADC",
-	secondary: "#538D4E",
-	primary: "#335ED5",
+	primary: "#0a193d",
+	secondary: "#335ED5",
 };
 
 export const CLEAR = "CLEAR";
