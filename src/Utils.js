@@ -1,11 +1,9 @@
-import { greWords } from "./Words";
 import { alphabets } from "./Constants";
 
-export function getRandomGreWord(setId) {
-	const max = setId * 30;
-	const min = max - 30;
-	const randomIndex = Math.floor(Math.random() * (max - min) + min);
-	return greWords[randomIndex];
+export function getRandomGreWord(wordSet) {
+	const len = wordSet.length;
+	const randomIndex = Math.floor(Math.random() * len);
+	return wordSet[randomIndex];
 }
 
 export function getFillerLetters(NUM_FILLER_LETTERS) {

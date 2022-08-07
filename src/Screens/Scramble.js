@@ -8,38 +8,55 @@ import {
 	Pressable,
 	Alert,
 	TouchableOpacity,
-	DevSettings,
 } from "react-native";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import { colors, CLEAR, numFillerLetters } from "../Constants";
 import { getRandomGreWord, getFillerLetters, shuffleArray } from "../Utils";
 
-let wordMeaningPair = getRandomGreWord(1);
-let word = wordMeaningPair.word;
-let meaning = wordMeaningPair.meaning;
-let letters = word.split("");
-let scrambledLetters = shuffleArray(
-	letters.concat(getFillerLetters(numFillerLetters))
-);
-
 export default function Scramble({ route, navigation }) {
-	const { setId } = route.params;
+	let { wordSet } = route.params;
+
+	const [pairIndex, setPairIndex] = useState(0);
+	let wordMeaningPair = wordSet[pairIndex];
+	let letters = wordMeaningPair.word.split("");
+	let scrambledLetters = shuffleArray(
+		letters.concat(getFillerLetters(numFillerLetters))
+	);
 
 	useEffect(() => {
-		const { setId } = route.params;
-		const refresh = navigation.addListener("focus", () => {
-			refreshWords(setId);
-		});
-		return refresh;
-	}, [navigation, route]);
+		if (pairIndex > 0) {
+			wordSet = shuffleArray(wordSet);
+			let wordMeaningPair = wordSet[pairIndex];
+			let letters = wordMeaningPair.word.split("");
+			let scrambledLetters = shuffleArray(
+				letters.concat(getFillerLetters(numFillerLetters))
+			);
+			let initialAnswerState = new Array(
+				wordMeaningPair.word.length
+			).fill("");
+			setRow(scrambledLetters);
+			setGameState("playing");
+			setTextOnAnswer(initialAnswerState);
+			setCurCellPos(0);
+			setTimerKey((prevKey) => prevKey + 1);
+		}
+	}, [pairIndex]);
 
-	let initialAnswerState = new Array(word.length).fill("");
+	// useEffect(() => {
+	// 	const { setId } = route.params;
+	// 	const refresh = navigation.addListener("focus", () => {
+	// 		refreshWords(setId);
+	// 	});
+	// 	return refresh;
+	// }, [navigation, route]);
+
+	let initialAnswerState = new Array(wordMeaningPair.word.length).fill("");
 
 	const [row, setRow] = useState(scrambledLetters);
 	const [textOnAnswer, setTextOnAnswer] = useState(initialAnswerState);
 	const [curCellPos, setCurCellPos] = useState(0);
 	const [gameState, setGameState] = useState("playing");
-	const [key, setKey] = useState(0);
+	const [timerKey, setTimerKey] = useState(0);
 	const [score, setScore] = useState(0);
 
 	useEffect(() => {
@@ -61,35 +78,26 @@ export default function Scramble({ route, navigation }) {
 	const checkGameState = () => {
 		if (checkIfWon() && gameState !== "won") {
 			Alert.alert("Hurray", "You won!", [
-				{ text: "Next", onPress: refreshWords(setId) },
+				{ text: "Next", onPress: () => setPairIndex(pairIndex + 1) },
 			]);
 			setGameState("won");
 			setScore(score + 1);
 		} else if (checkIfLost() && gameState !== "lost") {
 			Alert.alert("Meh", "Incorrect, try again!", [
-				{ text: "Next", onPress: refreshWords(setId) },
+				{
+					text: "Next",
+					onPress: () => setPairIndex(pairIndex + 1),
+				},
 			]);
 		}
 	};
-	const refreshWords = (setId) => {
-		wordMeaningPair = getRandomGreWord(setId);
-		word = wordMeaningPair.word;
-		meaning = wordMeaningPair.meaning;
-		letters = word.split("");
-		scrambledLetters = shuffleArray(
-			letters.concat(getFillerLetters(numFillerLetters))
-		);
-		initialAnswerState = new Array(word.length).fill("");
-		setRow(scrambledLetters);
-		setGameState("playing");
-		setTextOnAnswer(initialAnswerState);
-		setCurCellPos(0);
-		setKey((prevKey) => prevKey + 1);
-	};
 
 	function revealAnswer() {
-		Alert.alert(word, meaning, [
-			{ text: "Next", onPress: refreshWords(setId) },
+		Alert.alert(wordMeaningPair.word, wordMeaningPair.meaning, [
+			{
+				text: "Next",
+				onPress: () => setPairIndex(pairIndex + 1),
+			},
 		]);
 	}
 
@@ -117,7 +125,7 @@ export default function Scramble({ route, navigation }) {
 			<View style={styles.timerContainer}>
 				<Text style={styles.score}>Score: {score}</Text>
 				<CountdownCircleTimer
-					key={key}
+					key={timerKey}
 					isPlaying
 					duration={30}
 					colors={[colors.primary, "#F7B801", "#A30000", "#A30000"]}
@@ -154,7 +162,9 @@ export default function Scramble({ route, navigation }) {
 				</View>
 			</View>
 			<View style={styles.meaningContainer}>
-				<Text style={styles.meaning}>Definition: {meaning}</Text>
+				<Text style={styles.meaning}>
+					Definition: {wordMeaningPair.meaning}
+				</Text>
 			</View>
 			<View style={[styles.cellContainer, { marginBottom: 20 }]}>
 				<View style={styles.row}>

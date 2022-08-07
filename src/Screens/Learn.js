@@ -11,28 +11,43 @@ import Card from "../Components/Card";
 import { greWords } from "../Words";
 import { colors } from "../Constants";
 
-const Item = ({ title, subTitle }) => (
-	<Card title={title} subTitle={subTitle} />
+const Item = ({ title, subTitle1, subTitle2, subTitle3 }) => (
+	<Card
+		title={title}
+		subTitle1={subTitle1}
+		subTitle2={subTitle2}
+		subTitle3={subTitle3}
+	/>
 );
 
 function Learn(props) {
-	const [wordData, setWordData] = React.useState(greWords.slice(0, 30));
-	const [startIndex, setStartIndex] = React.useState(30);
+	const [wordData, setWordData] = React.useState(greWords.slice(0, 26));
+	const [startIndex, setStartIndex] = React.useState(26);
 	const renderItem = ({ item, index }) => {
 		const title = index + 1 + ") " + item.word;
-		return <Item title={title} subTitle={item.meaning} />;
+		const subTitle1 = "MEANING: " + item.meaning;
+		const subTitle2 = "POS: " + item.POS;
+		const subTitle3 = "EXAMPLE: " + item.example;
+		return (
+			<Item
+				title={title}
+				subTitle1={subTitle1}
+				subTitle2={subTitle2}
+				subTitle3={subTitle3}
+			/>
+		);
 	};
 
 	const getNextSet = () => {
 		start = startIndex;
-		end = start + 30;
+		end = start + 26;
 		newData = greWords.slice(start, end);
 		setWordData(newData);
 		setStartIndex(end);
 	};
 	const getPreviousSet = () => {
-		end = startIndex - 30;
-		start = end - 30;
+		end = startIndex - 26;
+		start = end - 26;
 		newData = greWords.slice(start, end);
 		setWordData(newData);
 		setStartIndex(end);

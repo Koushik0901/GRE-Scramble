@@ -2,11 +2,13 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { colors } from "../Constants";
 
-function Card({ title, subTitle, width = "90%" }) {
+function Card({ title, subTitle1, subTitle2, subTitle3, width = "90%" }) {
 	return (
 		<View style={styles.card}>
 			<Text style={[styles.title, { width: width }]}>{title}</Text>
-			<Text style={styles.subTitle}>{subTitle}</Text>
+			<Text style={styles.subTitle}>{subTitle1}</Text>
+			<Text style={styles.subTitle}>{subTitle2}</Text>
+			<Text style={styles.subTitle}>{subTitle3}</Text>
 		</View>
 	);
 }
@@ -31,8 +33,9 @@ const styles = StyleSheet.create({
 		color: colors.primary,
 	},
 	subTitle: {
-		fontSize: 18,
-		fontStyle: "italic",
+		fontSize: 16,
+		fontWeight: "bold",
+		marginBottom: 8,
 	},
 });
 

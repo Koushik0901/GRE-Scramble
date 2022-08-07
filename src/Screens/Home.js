@@ -7,18 +7,28 @@ import {
 	StyleSheet,
 } from "react-native";
 import { colors } from "../Constants";
+import { greWords } from "../Words";
 
 function range(start, end) {
 	if (start === end) return [start];
 	return [start, ...range(start + 1, end)];
 }
-const sets = range(1, 27);
+
+function getWordsSet(id) {
+	const end = id * 26;
+	const start = end - 26;
+	return greWords.slice(start, end);
+}
+
+const sets = range(1, 41);
 
 export default function Home({ navigation }) {
 	const renderItem = ({ item }) => (
 		<TouchableOpacity
 			style={styles.card}
-			onPress={() => navigation.navigate("Scramble", { setId: item })}
+			onPress={() =>
+				navigation.navigate("Scramble", { wordSet: getWordsSet(item) })
+			}
 		>
 			<Text style={styles.text}>SET {item}</Text>
 		</TouchableOpacity>
