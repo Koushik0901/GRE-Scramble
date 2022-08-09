@@ -29,7 +29,7 @@
       "package": "com.koushik0901.grescramble"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icon.png"
     }
   }
 }
