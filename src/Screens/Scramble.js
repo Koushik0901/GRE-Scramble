@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import { colors, CLEAR, numFillerLetters } from "../Constants";
-import { getRandomGreWord, getFillerLetters, shuffleArray } from "../Utils";
+import { getFillerLetters, shuffleArray } from "../Utils";
 
 export default function Scramble({ route, navigation }) {
 	let { wordSet } = route.params;
