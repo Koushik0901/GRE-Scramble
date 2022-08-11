@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 		width: "90%",
 		alignItems: "flex-end",
-		marginBottom: 10,
+		marginBottom: 50,
 	},
 	buttons: {
 		width: "35%",

@@ -1,99 +1,56 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "./src/Screens/Home";
 import Scramble from "./src/Screens/Scramble";
 import Learn from "./src/Screens/Learn";
 import { colors } from "./src/Constants";
 
-const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 export default function App() {
 	return (
 		<NavigationContainer>
-			<Tab.Navigator initialRouteName="Home">
-				<Tab.Screen
+			<Stack.Navigator initialRouteName="Home">
+				<Stack.Screen
 					name="Home"
 					component={Home}
 					options={{
-						headerTitle: "Home",
-						tabBarIcon: ({ color }) => (
-							<MaterialCommunityIcons
-								name="home-outline"
-								color={color}
-								size={30}
-							/>
-						),
-						tabBarStyle: {
-							height: 70,
-							padding: 8,
-						},
-						tabBarLabelStyle: {
-							fontSize: 14,
-							paddingBottom: 8,
-						},
+						title: "Home",
 						headerTitleStyle: {
 							fontWeight: "bold",
+							fontSize: 24,
+							height: 50,
 							color: colors.primary,
 						},
 					}}
 				/>
-				<Tab.Screen
+				<Stack.Screen
 					name="Scramble"
 					component={Scramble}
 					options={{
-						tabBarIcon: ({ color }) => (
-							<MaterialCommunityIcons
-								name="home-outline"
-								color="white"
-								size={30}
-							/>
-						),
-						tabBarStyle: {
-							height: 70,
-							padding: 8,
-							backgroundColor: "white",
-						},
-						tabBarLabelStyle: {
-							fontSize: 14,
-							paddingBottom: 8,
-							color: "white",
-						},
-						headerTitle: "GRE Scramble",
+						title: "Scramble",
 						headerTitleStyle: {
 							fontWeight: "bold",
+							fontSize: 24,
+							height: 50,
 							color: colors.primary,
 						},
 					}}
 				/>
-				<Tab.Screen
+				<Stack.Screen
 					name="Learn"
 					component={Learn}
 					options={{
-						headerTitle: "Learn",
-						tabBarLabel: "Learn",
-						tabBarIcon: ({ color }) => (
-							<MaterialCommunityIcons
-								name="book-open-outline"
-								color={color}
-								size={30}
-							/>
-						),
-						tabBarStyle: {
-							height: 70,
-							padding: 8,
-						},
-						tabBarLabelStyle: {
-							fontSize: 14,
-							paddingBottom: 8,
-						},
+						title: "Learn",
 						headerTitleStyle: {
 							fontWeight: "bold",
+							fontSize: 24,
+							height: 50,
 							color: colors.primary,
 						},
 					}}
 				/>
-			</Tab.Navigator>
+			</Stack.Navigator>
 		</NavigationContainer>
 	);
 }
