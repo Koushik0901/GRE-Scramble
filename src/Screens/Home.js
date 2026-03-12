@@ -1,175 +1,249 @@
 import React from "react";
 import {
-	SafeAreaView,
-	TouchableOpacity,
-	Text,
-	FlatList,
+	Pressable,
 	StyleSheet,
+	Text,
 	View,
-	Modal,
+	useWindowDimensions,
 } from "react-native";
-import { colors } from "../Constants";
-import { greWords } from "../Words";
-
-function range(start, end) {
-	if (start === end) return [start];
-	return [start, ...range(start + 1, end)];
-}
-
-function getWordsSet(id) {
-	const end = id * 26;
-	const start = end - 26;
-	return greWords.slice(start, end);
-}
-
-const sets = range(1, 41);
+import { colors, SET_SIZE, typography } from "../Constants";
+import AppDialog from "../components/AppDialog";
+import AppScreen from "../components/AppScreen";
+import { buildWordSets, getSetPreview } from "../Utils";
 
 export default function Home({ navigation }) {
-	const [modalVisible, setModalVisible] = React.useState(false);
-	const [selectedSet, setSelectedSet] = React.useState(getWordsSet(1));
-	const renderItem = ({ item }) => (
-		<TouchableOpacity
-			style={styles.card}
-			onPress={() => {
-				setModalVisible(true);
-				setSelectedSet(item);
-			}}
-			// onPress={() =>
-			// 	navigation.navigate("Scramble", { wordSet: getWordsSet(item) })
-			// }
-		>
-			<Text style={styles.text}>SET {item}</Text>
-		</TouchableOpacity>
-	);
+	const sets = React.useMemo(() => buildWordSets(), []);
+	const [selectedSet, setSelectedSet] = React.useState(null);
+	const { width } = useWindowDimensions();
+	const cardWidth =
+		width > 1080 ? 320 : width > 760 ? Math.max((width - 78) / 2, 280) : width - 36;
+
+	const openSet = (wordSet) => setSelectedSet(wordSet);
+	const closeDialog = () => setSelectedSet(null);
+
+	const launchRoute = (screen) => {
+		if (!selectedSet) {
+			return;
+		}
+
+		navigation.navigate(screen, {
+			wordSet: selectedSet.words,
+			setId: selectedSet.id,
+			setLabel: selectedSet.label,
+		});
+		closeDialog();
+	};
+
 	return (
-		<SafeAreaView style={styles.container}>
-			<Modal
-				animationType="fade"
-				transparent={true}
-				visible={modalVisible}
-				onRequestClose={() => {
-					// Alert.alert("Modal has been closed.");
-					setModalVisible(!modalVisible);
-				}}
-			>
-				<View style={styles.centeredView}>
-					<View style={styles.modalView}>
-						<Text style={styles.modalText}>
-							What are we doing today?
-						</Text>
-						<TouchableOpacity
-							style={styles.button}
-							onPress={() => {
-								setModalVisible(!modalVisible);
-								navigation.navigate("Scramble", {
-									wordSet: getWordsSet(selectedSet),
-								});
-							}}
-						>
-							<Text
-								style={[
-									styles.text,
-									{ fontSize: 20, alignSelf: "center" },
-								]}
-							>
-								Test
-							</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							style={styles.button}
-							onPress={() => {
-								setModalVisible(!modalVisible);
-								navigation.navigate("Learn", {
-									wordSet: getWordsSet(selectedSet),
-								});
-							}}
-						>
-							<Text
-								style={[
-									styles.text,
-									{ fontSize: 20, alignSelf: "center" },
-								]}
-							>
-								Learn
-							</Text>
-						</TouchableOpacity>
-					</View>
+		<AppScreen
+			eyebrow="Vocabulary Studio"
+			title="Study the deck. Then race the scramble."
+			subtitle="Sharpen your GRE vocabulary with curated decks, quick study cards, and fast scramble rounds."
+		>
+			<View style={styles.summaryCard}>
+				<View style={styles.summaryLead}>
+					<Text style={styles.summaryLeadEyebrow}>Plan your session</Text>
+					<Text style={styles.summaryLeadTitle}>
+						Choose a deck, review the vocabulary, then switch into speed mode.
+					</Text>
 				</View>
-			</Modal>
-			<FlatList
-				data={sets}
-				renderItem={renderItem}
-				numColumns={2}
-				horizontal={false}
+				<View style={styles.summaryColumn}>
+					<Text style={styles.summaryValue}>{sets.length}</Text>
+					<Text style={styles.summaryLabel}>curated sets</Text>
+				</View>
+				<View style={styles.summaryDivider} />
+				<View style={styles.summaryColumn}>
+					<Text style={styles.summaryValue}>{SET_SIZE}</Text>
+					<Text style={styles.summaryLabel}>words per deck</Text>
+				</View>
+				<View style={styles.summaryDivider} />
+				<View style={styles.summaryColumn}>
+					<Text style={styles.summaryValue}>Tap</Text>
+					<Text style={styles.summaryLabel}>to choose a mode</Text>
+				</View>
+			</View>
+
+			<View style={styles.grid}>
+				{sets.map((wordSet) => (
+					<Pressable
+						key={wordSet.id}
+						onPress={() => openSet(wordSet)}
+						style={({ pressed, hovered }) => [
+							styles.card,
+							{
+								width: cardWidth,
+								opacity: pressed ? 0.94 : 1,
+								transform: [{ translateY: pressed ? 2 : hovered ? -2 : 0 }],
+							},
+						]}
+					>
+						<Text style={styles.cardEyebrow}>Deck {wordSet.id}</Text>
+						<Text style={styles.cardTitle}>{wordSet.label}</Text>
+						<Text style={styles.cardCopy}>
+							{getSetPreview(wordSet.words)}
+						</Text>
+						<View style={styles.cardFooter}>
+							<View style={styles.cardFooterBadge}>
+								<Text style={styles.cardFooterText}>
+									{wordSet.words.length} words
+								</Text>
+							</View>
+							<View style={styles.cardFooterBadge}>
+								<Text style={styles.cardFooterText}>Learn or Scramble</Text>
+							</View>
+						</View>
+					</Pressable>
+				))}
+			</View>
+
+			<AppDialog
+				visible={Boolean(selectedSet)}
+				onClose={closeDialog}
+				title={selectedSet ? `${selectedSet.label} is ready` : ""}
+				message={
+					selectedSet
+						? `Start by reviewing the flashcards or jump directly into the scramble round.\n\nPreview: ${getSetPreview(
+								selectedSet.words
+						  )}`
+						: ""
+				}
+				actions={[
+					{
+						label: "Learn deck",
+						variant: "secondary",
+						onPress: () => launchRoute("Learn"),
+					},
+					{
+						label: "Play scramble",
+						onPress: () => launchRoute("Scramble"),
+					},
+				]}
 			/>
-		</SafeAreaView>
+		</AppScreen>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: "center",
+	summaryCard: {
+		borderRadius: 34,
+		padding: 22,
+		backgroundColor: colors.panelStrong,
+		borderWidth: 1,
+		borderColor: colors.line,
+		flexDirection: "row",
 		flexWrap: "wrap",
-		marginTop: 10,
-		marginLeft: 20,
-		marginRight: 10,
-	},
-	centeredView: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		// marginTop: 22,
-		backgroundColor: "rgba(0,0,0,0.5)",
-	},
-	modalView: {
-		width: "80%",
-		height: "28%",
-		margin: 20,
-		backgroundColor: "white",
-		borderRadius: 20,
-		padding: 35,
-		alignItems: "center",
+		rowGap: 16,
+		columnGap: 14,
+		marginBottom: 24,
 		shadowColor: "#000",
-		shadowOffset: {
-			width: 0,
-			height: 2,
-		},
-		shadowOpacity: 0.25,
-		shadowRadius: 4,
-		elevation: 5,
+		shadowOpacity: 0.12,
+		shadowRadius: 26,
+		shadowOffset: { width: 0, height: 18 },
+		elevation: 8,
 	},
-	modalText: {
-		fontSize: 18,
-		fontWeight: "bold",
-		marginBottom: 15,
+	summaryLead: {
+		width: "100%",
+		paddingBottom: 10,
+		borderBottomWidth: 1,
+		borderBottomColor: colors.line,
 	},
-	button: {
-		width: 150,
-		height: 50,
-		borderRadius: 25,
-		padding: 10,
-		elevation: 2,
-		marginBottom: 20,
-		backgroundColor: colors.primary,
+	summaryLeadEyebrow: {
+		fontSize: 12,
+		letterSpacing: 2.4,
+		textTransform: "uppercase",
+		color: "rgba(255, 250, 242, 0.74)",
+		fontFamily: typography.bodyBold,
+		marginBottom: 8,
 	},
-	text: {
+	summaryLeadTitle: {
+		fontSize: 23,
+		lineHeight: 30,
+		color: colors.paper,
+		fontFamily: typography.display,
+		maxWidth: 540,
+	},
+	summaryColumn: {
+		flex: 1,
+		minWidth: 100,
+	},
+	summaryValue: {
 		fontSize: 26,
-		color: "white",
-		fontWeight: "bold",
+		color: colors.paper,
+		fontFamily: typography.display,
+	},
+	summaryLabel: {
+		fontSize: 13,
+		lineHeight: 18,
+		color: "rgba(255, 250, 242, 0.72)",
+		textTransform: "uppercase",
+		letterSpacing: 1,
+		marginTop: 6,
+		fontFamily: typography.bodyBold,
+	},
+	summaryDivider: {
+		width: 1,
+		backgroundColor: colors.line,
+		marginHorizontal: 12,
+	},
+	grid: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		gap: 16,
 	},
 	card: {
-		width: 180,
-		height: 130,
-		backgroundColor: colors.primary,
-		borderRadius: 15,
-		marginTop: 10,
-		marginRight: 10,
+		borderRadius: 34,
+		padding: 24,
+		backgroundColor: colors.paperLift,
+		borderWidth: 1,
+		borderColor: colors.cardLineStrong,
+		minHeight: 210,
+		justifyContent: "space-between",
+		shadowColor: "#08111f",
+		shadowOpacity: 0.14,
+		shadowRadius: 26,
+		shadowOffset: { width: 0, height: 18 },
+		elevation: 10,
+	},
+	cardEyebrow: {
+		fontSize: 12,
+		color: colors.accent,
+		fontFamily: typography.bodyBold,
+		letterSpacing: 2,
+		textTransform: "uppercase",
+		marginBottom: 10,
+	},
+	cardTitle: {
+		fontSize: 30,
+		lineHeight: 34,
+		fontFamily: typography.display,
+		color: colors.text,
+		marginBottom: 12,
+	},
+	cardCopy: {
+		fontSize: 15,
+		lineHeight: 24,
+		color: colors.muted,
+		flex: 1,
+		fontFamily: typography.body,
+	},
+	cardFooter: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		gap: 10,
 		alignItems: "center",
-		justifyContent: "center",
-		paddingTop: 20,
-		paddingBottom: 30,
-		paddingLeft: 20,
-		paddingRight: 20,
+		marginTop: 16,
+	},
+	cardFooterBadge: {
+		paddingHorizontal: 12,
+		paddingVertical: 9,
+		borderRadius: 999,
+		backgroundColor: colors.goldSoft,
+		borderWidth: 1,
+		borderColor: "rgba(209, 170, 99, 0.25)",
+	},
+	cardFooterText: {
+		fontSize: 13,
+		color: colors.navySoft,
+		fontFamily: typography.bodySemiBold,
 	},
 });

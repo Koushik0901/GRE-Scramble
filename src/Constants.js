@@ -1,14 +1,45 @@
 export const colors = {
-	black: "#121214",
-	darkgrey: "#3A3A3D",
-	background: "#f8f9fa",
-	lightgrey: "#D7DADC",
-	primary: "#0a193d",
-	secondary: "#335ED5",
+	canvas: "#f2ecdf",
+	paper: "#fffaf2",
+	paperMuted: "#f7efdf",
+	paperLift: "#fffdf8",
+	text: "#101826",
+	muted: "#6d726f",
+	ink: "#0d1728",
+	navy: "#183153",
+	navySoft: "#26486e",
+	accent: "#c35d3f",
+	accentSoft: "#efc7b8",
+	accentDeep: "#9f452c",
+	gold: "#d1aa63",
+	goldSoft: "rgba(209, 170, 99, 0.22)",
+	success: "#2d7d5f",
+	warning: "#c9862c",
+	danger: "#a44141",
+	line: "rgba(255, 250, 242, 0.18)",
+	cardLine: "rgba(13, 23, 40, 0.08)",
+	cardLineStrong: "rgba(13, 23, 40, 0.14)",
+	glow: "rgba(195, 93, 63, 0.18)",
+	panel: "rgba(255, 250, 242, 0.1)",
+	panelStrong: "rgba(255, 250, 242, 0.16)",
+	shadow: "rgba(8, 17, 31, 0.18)",
+	appGradient: ["#08111f", "#12243d", "#1f4467"],
+};
+
+export const typography = {
+	display: "InstrumentSerif_400Regular",
+	displayItalic: "InstrumentSerif_400Regular_Italic",
+	body: "Manrope_400Regular",
+	bodyMedium: "Manrope_500Medium",
+	bodySemiBold: "Manrope_600SemiBold",
+	bodyBold: "Manrope_700Bold",
+	bodyExtraBold: "Manrope_800ExtraBold",
 };
 
 export const CLEAR = "CLEAR";
-export const numFillerLetters = 3;
+export const NUM_FILLER_LETTERS = 4;
+export const ROUND_TIME = 30;
+export const SET_SIZE = 26;
 
 export const alphabets = [
 	"a",
